@@ -3,7 +3,7 @@
     <div class="mx-auto flex max-w-6xl flex-col items-center px-4 py-12">
       <div class="w-full max-w-xl rounded-2xl border p-8 shadow-sm">
         <div class="mb-6 space-y-2">
-          <p class="text-sm font-medium uppercase tracking-wide text-emerald-700">Acesso</p>
+          <p class="text-sm font-medium tracking-wide text-emerald-700 uppercase">Acesso</p>
           <h1 class="text-2xl font-semibold">Entre com seu e-mail</h1>
           <p class="text-sm">
             Use seu e-mail e senha cadastrados. Depois do login você será redirecionado.
@@ -20,7 +20,7 @@
               autocomplete="email"
               placeholder="seu@email.com"
               required
-              class="0 text-base-300 w-full rounded-lg border px-3 py-2 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+              class="0 text-base-300 w-full rounded-lg border px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
             />
           </div>
 

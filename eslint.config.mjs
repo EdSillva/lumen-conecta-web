@@ -8,6 +8,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default defineConfigWithVueTs(
   {
+    ignores: ['**/dist/**', '**/.output/**', '**/.nuxt/**', '**/.vite/**', '**/coverage/**'],
+  },
+  {
     languageOptions: {
       parserOptions: {
         tsconfigRootDir: __dirname,

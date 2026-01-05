@@ -1,7 +1,7 @@
 <template>
   <section class="max-w-3xl space-y-6">
     <div class="space-y-2">
-      <p class="text-sm uppercase tracking-wide text-slate-500">Criador</p>
+      <p class="text-sm tracking-wide text-slate-500 uppercase">Criador</p>
       <h1 class="text-2xl font-semibold text-slate-900">
         {{ isEdit ? 'Editar evento' : 'Novo evento' }}
       </h1>
@@ -78,58 +78,58 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { createEventSchema, type EventResponse } from '../../schemas/events';
+import { computed, reactive, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { createEventSchema, type EventResponse } from '../../schemas/events'
 
-import { api } from '../../services/api';
-import { useAuthStore } from '../auth/store/auth';
+import { api } from '../../services/api'
+import { useAuthStore } from '../auth/store/auth'
 
-const route = useRoute();
-const router = useRouter();
-const auth = useAuthStore();
-const isEdit = computed(() => Boolean(route.params.id));
-const loading = ref(false);
-const submitError = ref('');
+const route = useRoute()
+const router = useRouter()
+const auth = useAuthStore()
+const isEdit = computed(() => Boolean(route.params.id))
+const loading = ref(false)
+const submitError = ref('')
 
 const form = reactive({
   title: '',
   description: '',
   date: '',
-  location: ''
-});
+  location: '',
+})
 
-const errors = reactive<Record<string, string | undefined>>({});
+const errors = reactive<Record<string, string | undefined>>({})
 
 async function onSubmit() {
-  submitError.value = '';
+  submitError.value = ''
 
-  const result = createEventSchema.safeParse(form);
-  Object.keys(errors).forEach((key) => delete errors[key]);
+  const result = createEventSchema.safeParse(form)
+  Object.keys(errors).forEach((key) => delete errors[key])
 
   if (!result.success) {
     for (const issue of result.error.issues) {
-      errors[issue.path.join('.')] = issue.message;
+      errors[issue.path.join('.')] = issue.message
     }
-    return;
+    return
   }
 
   if (!auth.user?.token) {
-    submitError.value = 'Sessão expirada. Entre novamente.';
-    return;
+    submitError.value = 'Sessão expirada. Entre novamente.'
+    return
   }
 
-  loading.value = true;
+  loading.value = true
   try {
-    console.log('[event] submitting', result.data);
-    const created = await api.post<EventResponse>('/events', result.data);
-    console.log('[event] created', created);
-    void router.push({ name: 'events' });
+    console.log('[event] submitting', result.data)
+    const created = await api.post<EventResponse>('/events', result.data)
+    console.log('[event] created', created)
+    void router.push({ name: 'events' })
   } catch (err) {
-    console.error(err);
-    submitError.value = 'Não foi possível enviar o evento.';
+    console.error(err)
+    submitError.value = 'Não foi possível enviar o evento.'
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 }
 </script>

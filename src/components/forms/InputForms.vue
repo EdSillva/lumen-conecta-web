@@ -2,7 +2,7 @@
   <div class="flex w-full flex-col gap-1">
     <label v-if="label" :for="inputId" :class="computedLabelClass">
       {{ label }}
-      <span v-if="required" class="ml-1 text-error">*</span>
+      <span v-if="required" class="text-error ml-1">*</span>
     </label>
     <!-- Quando o tipo é select -->
 

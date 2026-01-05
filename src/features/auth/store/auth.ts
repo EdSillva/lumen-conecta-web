@@ -9,9 +9,9 @@ import {
   setPersistence,
   sendPasswordResetEmail,
 } from 'firebase/auth'
-
 import { auth } from '../../../lib/firebase'
 import { Role, type SessionUser } from '../types/roles'
+import { api } from '../../../services/api'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -62,19 +62,18 @@ export const useAuthStore = defineStore('auth', {
 
         void (async () => {
           try {
-            // Force-refresh to get fresh custom claims (roles) whenever token rotates.
-            const tokenResult = await user.getIdTokenResult(true)
-            const roles = (tokenResult.claims.roles as Role[] | undefined) ?? []
-            console.log('[auth] init/token roles', { uid: user.uid, roles })
+            const { roles } = await api.get<{ roles: Role[] }>('/auth/me')
+
+            const token = await user.getIdToken()
 
             this.user = {
               id: user.uid,
               name: user.displayName ?? user.email ?? 'Usuário',
               roles,
-              token: tokenResult.token,
-            } satisfies SessionUser
+              token,
+            }
           } catch (err) {
-            console.error('[auth] init/token error', err)
+            console.error('[auth] init error', err)
           } finally {
             this._resolveReady?.()
           }
@@ -97,21 +96,29 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async registerWithEmailPassword(email: string, password: string) {
+    async registerWithEmailPassword(payload: {
+      email: string
+      password: string
+      name?: string
+      roles?: Role[]
+    }) {
       this.loading = true
+      const { email, password, name, roles } = payload
       try {
         const result = await createUserWithEmailAndPassword(auth, email, password)
-        const idTokenResult = await result.user.getIdTokenResult(true)
 
-        const roles = (idTokenResult.claims.roles as Role[] | undefined) ?? []
-        console.log('[auth] register roles', { uid: result.user.uid, roles })
+        await api.post('/auth/register', {
+          roles: roles ?? [Role.PUBLIC],
+        })
+
+        const me = await api.get<{ roles: Role[] }>('/auth/me')
 
         this.user = {
           id: result.user.uid,
-          name: result.user.displayName ?? result.user.email ?? 'Usuário',
-          roles,
-          token: idTokenResult.token,
-        } satisfies SessionUser
+          name: name ?? result.user.email ?? 'Usuário',
+          roles: me.roles,
+          token: await result.user.getIdToken(),
+        }
       } finally {
         this.loading = false
       }
