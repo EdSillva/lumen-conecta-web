@@ -1,10 +1,8 @@
 <template>
   <section class="space-y-6">
     <header class="space-y-2">
-      <p class="text-sm uppercase tracking-wide text-slate-500">Backoffice</p>
-      <h1 class="text-2xl font-semibold text-slate-900">
-        Aprovação de eventos
-      </h1>
+      <p class="text-sm tracking-wide text-slate-500 uppercase">Backoffice</p>
+      <h1 class="text-2xl font-semibold text-slate-900">Aprovação de eventos</h1>
       <p class="text-sm text-slate-600">
         Somente administradores conseguem aprovar, rejeitar ou excluir.
       </p>
@@ -20,15 +18,12 @@
           <h2 class="text-lg font-semibold text-slate-900">
             {{ event.title }}
           </h2>
-          <span
-            class="rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700"
+          <span class="rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700"
             >PENDING</span
           >
         </div>
         <p class="mt-2 text-sm text-slate-700">{{ event.description }}</p>
-        <p class="mt-3 text-xs text-slate-500">
-          {{ event.date }} • {{ event.location }}
-        </p>
+        <p class="mt-3 text-xs text-slate-500">{{ event.date }} • {{ event.location }}</p>
 
         <div class="mt-4 flex gap-2">
           <button
@@ -74,14 +69,10 @@
         >
           <span>{{ gallery.title }}</span>
           <div class="flex gap-2">
-            <button
-              class="rounded border border-slate-300 px-3 py-1 hover:bg-slate-100"
-            >
+            <button class="rounded border border-slate-300 px-3 py-1 hover:bg-slate-100">
               Editar
             </button>
-            <button
-              class="rounded border border-rose-200 px-3 py-1 text-rose-700 hover:bg-rose-50"
-            >
+            <button class="rounded border border-rose-200 px-3 py-1 text-rose-700 hover:bg-rose-50">
               Excluir
             </button>
           </div>
@@ -92,61 +83,61 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue'
 
-import type { EventResponse } from '../../schemas/events';
-import type { GallerySummary } from '../../schemas/galleries';
-import { api } from '../../services/api';
+import type { EventResponse } from '../../schemas/events'
+import type { GallerySummary } from '../../schemas/galleries'
+import { api } from '../../services/api'
 
-const pendingEvents = ref<EventResponse[]>([]);
-const galleries = ref<GallerySummary[]>([]);
-const loadError = ref('');
-const actionLoading = reactive<Record<string, boolean>>({});
+const pendingEvents = ref<EventResponse[]>([])
+const galleries = ref<GallerySummary[]>([])
+const loadError = ref('')
+const actionLoading = reactive<Record<string, boolean>>({})
 
 async function loadPending() {
-  loadError.value = '';
+  loadError.value = ''
   try {
-    pendingEvents.value = await api.get<EventResponse[]>('/backoffice/events/pending');
+    pendingEvents.value = await api.get<EventResponse[]>('/backoffice/events/pending')
   } catch (err) {
-    console.error(err);
-    loadError.value = 'Não foi possível carregar eventos pendentes.';
+    console.error(err)
+    loadError.value = 'Não foi possível carregar eventos pendentes.'
   }
 }
 
 async function approve(id: string) {
   await runAction(id, async () => {
-    await api.put(`/backoffice/events/${id}/approve`);
-    pendingEvents.value = pendingEvents.value.filter((e) => e.id !== id);
-  });
+    await api.put(`/backoffice/events/${id}/approve`)
+    pendingEvents.value = pendingEvents.value.filter((e) => e.id !== id)
+  })
 }
 
 async function reject(id: string) {
   await runAction(id, async () => {
-    await api.put(`/backoffice/events/${id}/reject`);
-    pendingEvents.value = pendingEvents.value.filter((e) => e.id !== id);
-  });
+    await api.put(`/backoffice/events/${id}/reject`)
+    pendingEvents.value = pendingEvents.value.filter((e) => e.id !== id)
+  })
 }
 
 async function removeEvent(id: string) {
   await runAction(id, async () => {
-    await api.del(`/backoffice/events/${id}`);
-    pendingEvents.value = pendingEvents.value.filter((e) => e.id !== id);
-  });
+    await api.del(`/backoffice/events/${id}`)
+    pendingEvents.value = pendingEvents.value.filter((e) => e.id !== id)
+  })
 }
 
 async function runAction(id: string, fn: () => Promise<void>) {
-  actionLoading[id] = true;
+  actionLoading[id] = true
   try {
-    await fn();
+    await fn()
   } catch (err) {
-    console.error(err);
-    loadError.value = 'Ação não concluída. Tente novamente.';
+    console.error(err)
+    loadError.value = 'Ação não concluída. Tente novamente.'
   } finally {
-    actionLoading[id] = false;
+    actionLoading[id] = false
   }
 }
 
 onMounted(() => {
-  void loadPending();
-});
+  void loadPending()
+})
 </script>

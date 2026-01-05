@@ -3,7 +3,7 @@
     <div class="mx-auto flex max-w-6xl flex-col items-center px-4 py-12">
       <div class="w-full max-w-xl rounded-2xl border p-8 shadow-sm">
         <div class="mb-6 space-y-2">
-          <p class="text-sm font-medium uppercase tracking-wide text-emerald-700">Cadastro</p>
+          <p class="text-sm font-medium tracking-wide text-emerald-700 uppercase">Cadastro</p>
           <h1 class="text-2xl font-semibold">Crie sua conta</h1>
           <p class="text-sm">
             Use seu e-mail e senha para se cadastrar. Depois do registro você será redirecionado.
@@ -11,7 +11,7 @@
         </div>
 
         <!-- Formulário de registro -->
-        <form action="" @submit.prevent="handleSubmit">
+        <form action="" @submit.prevent="handleRegister">
           <div class="gap-4 space-y-4">
             <InputForms
               label="Nome"
@@ -36,12 +36,19 @@
               type="select"
               placeholder="Selecione seu papel"
               v-model="form.roles"
-            />
+            >
+              <template #options>
+                <option v-for="role in roleOptions" :key="role.value" :value="role.value">
+                  {{ role.label }}
+                </option>
+              </template>
+            </InputForms>
           </div>
 
           <div class="py-8">
             <button type="submit" :disabled="auth.loading" class="btn btn-primary w-full">
-              <span v-if="auth.loading">Criando conta...</span> <span v-else>Criar conta</span>
+              <span v-if="auth.loading">Criando conta...</span>
+              <span v-else>Criar conta</span>
             </button>
           </div>
         </form>
@@ -58,33 +65,31 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import InputForms from '../../components/forms/InputForms.vue'
-
-enum Roles {
-  USER = 'usuario',
-  CREATOR = 'criador',
-  ADMIN = 'administrador',
-}
+import { Role } from './types/roles'
+import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from './store/auth'
 
 interface RegisterForm {
   name: string
   email: string
   password: string
-  roles: Roles
+  roles: Role
 }
 
 const form = reactive<RegisterForm>({
   name: '',
   email: '',
   password: '',
-  roles: Roles.USER,
+  roles: Role.PUBLIC,
 })
-import { computed, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useAuthStore } from './store/auth'
-const email = ref('')
-const password = ref('')
+
+const roleOptions = [
+  { label: 'Público', value: Role.PUBLIC },
+  { label: 'Criador', value: Role.CREATOR },
+]
+
 const errorMessage = ref('')
 
 const redirectPath = computed(() => (route.query.redirect as string | undefined) ?? '/')
@@ -93,10 +98,16 @@ const auth = useAuthStore()
 const router = useRouter()
 const route = useRoute()
 
-const handleSubmit = async () => {
+const handleRegister = async () => {
   errorMessage.value = ''
   try {
-    await auth.registerWithEmailPassword(email.value.trim(), password.value.trim())
+    await auth.registerWithEmailPassword({
+      email: form.email.trim(),
+      password: form.password.trim(),
+      name: form.name.trim(),
+      roles: [form.roles],
+    })
+
     await router.push(redirectPath.value)
   } catch (err) {
     console.error(err)

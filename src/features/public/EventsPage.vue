@@ -2,7 +2,7 @@
   <div class="bg-base-100">
     <header class="flex items-start justify-between gap-4">
       <div>
-        <p class="text-sm uppercase tracking-wide">Eventos</p>
+        <p class="text-sm tracking-wide uppercase">Eventos</p>
         <h1 class="text-2xl font-semibold">Abertos ao público</h1>
         <p class="text-sm">Eventos aprovados pelo time de curadoria.</p>
       </div>

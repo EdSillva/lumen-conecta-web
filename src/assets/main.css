@@ -1,9 +1,9 @@
 @import 'tailwindcss';
-@plugin "daisyui" {
+@plugin 'daisyui' {
   themes: dark --default;
-};
+}
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   .my-btn {
     border-radius: 32px;
     background-color: var(--color-neutral);
@@ -15,11 +15,11 @@
   }
 }
 
-@plugin "daisyui/theme" {
-  name: "dark";
+@plugin 'daisyui/theme' {
+  name: 'dark';
   default: true;
   prefersdark: true;
-  color-scheme: "dark";
+  color-scheme: 'dark';
   --color-base-100: oklch(13% 0.028 261.692);
   --color-base-200: oklch(21% 0.034 264.665);
   --color-base-300: oklch(27% 0.033 256.848);
@@ -50,12 +50,11 @@
   --noise: 1;
 }
 
-
-@plugin "daisyui/theme" {
-  name: "light";
+@plugin 'daisyui/theme' {
+  name: 'light';
   default: false;
   prefersdark: false;
-  color-scheme: "light";
+  color-scheme: 'light';
   --color-base-100: oklch(98% 0.002 247.839);
   --color-base-200: oklch(96% 0.003 264.542);
   --color-base-300: oklch(92% 0.006 264.531);
@@ -85,4 +84,3 @@
   --depth: 0;
   --noise: 1;
 }
-

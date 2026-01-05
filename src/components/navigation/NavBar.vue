@@ -43,7 +43,11 @@
           </li>
         </ul>
       </div>
-      <button class="pr-2 text-start text-sm font-semibold md:text-lg" type="button" @click="goHome">
+      <button
+        class="pr-2 text-start text-sm font-semibold md:text-lg"
+        type="button"
+        @click="goHome"
+      >
         Lumen Conecta
       </button>
       <span class="rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-700"
